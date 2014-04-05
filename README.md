@@ -23,9 +23,10 @@ This Matlab toolbox was originally authored by Antti Niemistö who
 released it under GPLv2+ during his PhD at Tampere University of
 Technology, Finland.
 
-It has been ported to ImageJ 1.X, and later to ImageJ 2
-[under FreeBSD](http://imagej.net/pipermail/imagej-devel/2013-February/001404.html)
-by Barry DeZonia and Gabriel Landini.
+It has been ported to ImageJ 1.X by Gabriel Landini, partially picked
+up by Wayne Rasband, and based on Gabriel's port, Barry DeZonia
+[ported](http://imagej.net/pipermail/imagej-devel/2013-February/001404.html)
+it to ImageJ 2 (under the 2-clause BSD license).
 
 There is also an Octave port, as optional argument to `graythresh()`
 in the image package, prepared by Carnë Draug.
