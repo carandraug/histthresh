@@ -20,7 +20,7 @@ function T = th_minimum(I,n);
 % C. A. Glasbey, "An analysis of histogram-based thresholding algorithms,"
 % CVGIP: Graphical Models and Image Processing, vol. 55, pp. 532-537, 1993.
 %
-% Copyright (C) 2004 Antti Niemistö
+% Copyright (C) 2004-2013 Antti Niemistö
 % See README for more copyright information.
 
 if nargin == 1
@@ -46,8 +46,13 @@ while ~bimodtest(y)
 end
 
 % The threshold is the minimum between the two peaks.
+peakfound = false;
 for k = 2:n
-  if y(k-1) > y(k) & y(k+1) > y(k)
+  if y(k-1) < y(k) & y(k+1) < y(k)
+    peakfound = true;
+  end
+  if peakfound  & y(k-1) >= y(k) & y(k+1) >= y(k)
     T = k-1;
+    return
   end
 end

@@ -20,7 +20,7 @@ function T = th_maxlik(I,n)
 % C. A. Glasbey, "An analysis of histogram-based thresholding algorithms,"
 % CVGIP: Graphical Models and Image Processing, vol. 55, pp. 532-537, 1993.
 %
-% Copyright (C) 2004 Antti Niemistö
+% Copyright (C) 2004-2013 Antti Niemistö
 % See README for more copyright information.
 
 if nargin == 1
@@ -44,6 +44,11 @@ q = (A(y,n)-A(y,T)) / A(y,n);
 sigma2 = C(y,T)/A(y,T)-mu^2;
 tau2 = (C(y,n)-C(y,T)) / (A(y,n)-A(y,T)) - nu^2;
 
+% Return if sigma2 or tau2 are zero, to avoid division by zero
+if sigma2 == 0 | tau2 == 0
+  return
+end
+
 mu_prev = NaN;
 nu_prev = NaN;
 p_prev = NaN;
@@ -51,14 +56,13 @@ q_prev = NaN;
 sigma2_prev = NaN;
 tau2_prev = NaN;
 
-while abs(mu-mu_prev) > eps | abs(nu-nu_prev) > eps | ...
-      abs(p-p_prev) > eps | abs(q-q_prev) > eps | ...
-      abs(sigma2-sigma2_prev) > eps | abs(tau2-tau2_prev) > eps
+while true
   for i = 0:n
-    phi(i+1) = p/q * exp(-((i-mu)^2) / (2*sigma2)) / ...
-        (p/sqrt(sigma2) * exp(-((i-mu)^2) / (2*sigma2)) + ... 
+    phi(i+1) = p/sqrt((sigma2)) * exp(-((i-mu)^2) / (2*sigma2)) / ...
+        (p/sqrt(sigma2) * exp(-((i-mu)^2) / (2*sigma2)) + ...
          (q/sqrt(tau2)) * exp(-((i-nu)^2) / (2*tau2)));
   end
+
   ind = 0:n;
   gamma = 1-phi;
   F = phi*y';
@@ -75,6 +79,13 @@ while abs(mu-mu_prev) > eps | abs(nu-nu_prev) > eps | ...
   nu = ind.*gamma*y'/G;
   sigma2 = ind.^2.*phi*y'/F - mu^2;
   tau2 = ind.^2.*gamma*y'/G - nu^2;
+
+  if (abs(mu-mu_prev) < eps | abs(nu-nu_prev) < eps | ...
+      abs(p-p_prev) < eps | abs(q-q_prev) < eps | ...
+      abs(sigma2-sigma2_prev) < eps | abs(tau2-tau2_prev) < eps)
+    break;
+  end
+
 end
 
 % The terms of the quadratic equation to be solved.
